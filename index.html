@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4CAF50">
+    <title>Финансовая Цель</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <header class="header">
+            <h1>💰 Моя Цель</h1>
+            <button class="settings-btn" onclick="openSettings()">⚙️</button>
+        </header>
+
+        <!-- Карточка прогресса -->
+        <div class="progress-card">
+            <div class="target-info">
+                <div class="target-date">До <span id="targetDate">-</span></div>
+                <div class="target-amount">Цель: <span id="targetAmount">0</span> ₽</div>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+                <span class="progress-percent" id="progressPercent">0%</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Собрано</span>
+                    <span class="stat-value" id="totalCollected">0 ₽</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Осталось дней</span>
+                    <span class="stat-value" id="daysLeft">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">В день нужно</span>
+                    <span class="stat-value" id="dailyRequired">0 ₽</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Статус</span>
+                    <span class="stat-value" id="planStatus">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма добавления -->
+        <div class="add-section">
+            <h3>Добавить доход</h3>
+            <div class="input-group">
+                <input type="number" id="amountInput" placeholder="Сумма в рублях" inputmode="numeric">
+                <button class="add-btn" onclick="addIncome()">Добавить</button>
+            </div>
+        </div>
+
+        <!-- История -->
+        <div class="history-section">
+            <div class="history-header">
+                <h3>История операций</h3>
+                <button class="clear-btn" onclick="clearHistory()">Очистить</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-state">Нет операций</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Настройки цели</h2>
+                <button class="close-btn" onclick="closeSettings()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Дата окончания</label>
+                    <input type="date" id="endDateInput">
+                </div>
+                <div class="form-group">
+                    <label>Ежедневная цель (₽)</label>
+                    <input type="number" id="dailyGoalInput" placeholder="4000" inputmode="numeric">
+                </div>
+                <button class="save-btn" onclick="saveSettings()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
