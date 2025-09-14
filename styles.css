@@ -12,22 +12,24 @@ body {
     width: 100%;
     max-width: 360px;
     margin: 0 auto;
+    overflow-x: hidden; /* Предотвращаем горизонтальный скролл */
 }
 
 .container {
-    padding: 20px;
+    padding: 16px;
     min-height: 100vh;
+    width: 100%;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .header h1 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: #2c3e50;
 }
@@ -41,24 +43,26 @@ body {
     font-size: 20px;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-shrink: 0;
 }
 
 .progress-card {
     background: white;
     border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 24px;
+    padding: 20px;
+    margin-bottom: 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .target-info {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 20px;
 }
 
 .target-date {
-    font-size: 14px;
+    font-size: 13px;
     color: #7f8c8d;
 }
 
@@ -73,7 +77,7 @@ body {
     background: #f0f3f5;
     border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .progress-bar {
@@ -97,7 +101,7 @@ body {
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 12px;
 }
 
 .stat-item {
@@ -107,12 +111,12 @@ body {
 }
 
 .stat-label {
-    font-size: 12px;
+    font-size: 11px;
     color: #7f8c8d;
 }
 
 .stat-value {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     color: #2c3e50;
 }
@@ -120,46 +124,67 @@ body {
 .add-section {
     background: white;
     border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 24px;
+    padding: 16px;
+    margin-bottom: 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .add-section h3 {
-    font-size: 16px;
-    margin-bottom: 16px;
+    font-size: 15px;
+    margin-bottom: 12px;
     color: #2c3e50;
 }
 
-.input-group {
+.add-form {
     display: flex;
-    gap: 12px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
 }
 
 #amountInput {
     flex: 1;
-    padding: 12px 16px;
+    padding: 10px 12px;
     border: 2px solid #e0e6ed;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s;
+    width: 100%;
+}
+
+#incomeDate {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid #e0e6ed;
+    border-radius: 12px;
+    font-size: 14px;
     outline: none;
     transition: border-color 0.3s;
 }
 
-#amountInput:focus {
+#amountInput:focus,
+#incomeDate:focus {
     border-color: #4CAF50;
 }
 
 .add-btn {
-    padding: 12px 24px;
+    padding: 10px 20px;
     background: linear-gradient(135deg, #4CAF50, #66BB6A);
     color: white;
     border: none;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: transform 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .add-btn:active {
@@ -169,7 +194,7 @@ body {
 .history-section {
     background: white;
     border-radius: 20px;
-    padding: 20px;
+    padding: 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
@@ -177,22 +202,23 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .history-header h3 {
-    font-size: 16px;
+    font-size: 15px;
     color: #2c3e50;
 }
 
 .clear-btn {
-    padding: 6px 12px;
+    padding: 5px 10px;
     background: #ff6b6b;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 11px;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .history-list {
@@ -203,7 +229,8 @@ body {
 .history-item {
     display: flex;
     justify-content: space-between;
-    padding: 12px;
+    align-items: center;
+    padding: 10px 8px;
     border-bottom: 1px solid #f0f3f5;
 }
 
@@ -211,21 +238,28 @@ body {
     border-bottom: none;
 }
 
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
 .history-date {
-    font-size: 12px;
+    font-size: 11px;
     color: #7f8c8d;
 }
 
 .history-amount {
     font-weight: 600;
     color: #4CAF50;
+    font-size: 14px;
 }
 
 .empty-state {
     text-align: center;
-    padding: 32px;
+    padding: 30px;
     color: #95a5a6;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .modal {
@@ -246,7 +280,7 @@ body {
     transform: translate(-50%, -50%);
     background: white;
     border-radius: 20px;
-    padding: 24px;
+    padding: 20px;
     width: 90%;
     max-width: 320px;
 }
@@ -255,50 +289,56 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .modal-header h2 {
-    font-size: 20px;
+    font-size: 18px;
     color: #2c3e50;
 }
 
 .close-btn {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 22px;
     color: #7f8c8d;
     cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
+    margin-bottom: 6px;
+    font-size: 13px;
     color: #7f8c8d;
 }
 
 .form-group input {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border: 2px solid #e0e6ed;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 15px;
     outline: none;
 }
 
 .save-btn {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background: linear-gradient(135deg, #4CAF50, #66BB6A);
     color: white;
     border: none;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
 }
@@ -309,4 +349,20 @@ body {
 
 .negative {
     color: #ff6b6b !important;
+}
+
+/* Для маленьких экранов */
+@media screen and (max-width: 360px) {
+    .container {
+        padding: 12px;
+    }
+    
+    .header h1 {
+        font-size: 20px;
+    }
+    
+    .add-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
 }
