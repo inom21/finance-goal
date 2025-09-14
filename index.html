@@ -21,7 +21,9 @@
         <!-- Карточка прогресса -->
         <div class="progress-card">
             <div class="target-info">
-                <div class="target-date">До <span id="targetDate">-</span></div>
+                <div class="target-date">
+                    <span id="startDate">-</span> → <span id="targetDate">-</span>
+                </div>
                 <div class="target-amount">Цель: <span id="targetAmount">0</span> ₽</div>
             </div>
             
@@ -53,9 +55,14 @@
         <!-- Форма добавления -->
         <div class="add-section">
             <h3>Добавить доход</h3>
-            <div class="input-group">
-                <input type="number" id="amountInput" placeholder="Сумма в рублях" inputmode="numeric">
-                <button class="add-btn" onclick="addIncome()">Добавить</button>
+            <div class="add-form">
+                <div class="form-row">
+                    <input type="number" id="amountInput" placeholder="Сумма в рублях" inputmode="numeric">
+                </div>
+                <div class="form-row">
+                    <input type="date" id="incomeDate">
+                    <button class="add-btn" onclick="addIncome()">Добавить</button>
+                </div>
             </div>
         </div>
 
@@ -79,6 +86,10 @@
                 <button class="close-btn" onclick="closeSettings()">✕</button>
             </div>
             <div class="modal-body">
+                <div class="form-group">
+                    <label>Дата начала</label>
+                    <input type="date" id="startDateInput">
+                </div>
                 <div class="form-group">
                     <label>Дата окончания</label>
                     <input type="date" id="endDateInput">
