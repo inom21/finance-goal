@@ -1,5 +1,6 @@
 // Инициализация данных
 let appData = {
+    startDate: null,
     targetDate: null,
     dailyGoal: 0,
     history: [],
@@ -11,7 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
     loadData();
     updateUI();
     
-    // Установка минимальной даты на завтра
+    // Установка текущей даты в поле добавления дохода
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('incomeDate').value = today;
+    document.getElementById('incomeDate').max = today;
+    
+    // Установка дат в настройках
+    document.getElementById('startDateInput').value = today;
+    document.getElementById('startDateInput').max = today;
+    
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     document.getElementById('endDateInput').min = tomorrow.toISOString().split('T')[0];
@@ -42,6 +51,9 @@ function openSettings() {
     document.getElementById('settingsModal').style.display = 'block';
     
     // Заполнение текущими значениями
+    if (appData.startDate) {
+        document.getElementById('startDateInput').value = appData.startDate;
+    }
     if (appData.targetDate) {
         document.getElementById('endDateInput').value = appData.targetDate;
     }
@@ -57,14 +69,22 @@ function closeSettings() {
 
 // Сохранение настроек
 function saveSettings() {
+    const startDate = document.getElementById('startDateInput').value;
     const endDate = document.getElementById('endDateInput').value;
     const dailyGoal = document.getElementById('dailyGoalInput').value;
     
-    if (!endDate || !dailyGoal) {
+    if (!startDate || !endDate || !dailyGoal) {
         alert('Заполните все поля!');
         return;
     }
     
+    // Проверка, что дата окончания позже даты начала
+    if (new Date(endDate) <= new Date(startDate)) {
+        alert('Дата окончания должна быть позже даты начала!');
+        return;
+    }
+    
+    appData.startDate = startDate;
     appData.targetDate = endDate;
     appData.dailyGoal = parseFloat(dailyGoal);
     
@@ -75,24 +95,47 @@ function saveSettings() {
 
 // Добавление дохода
 function addIncome() {
-    const input = document.getElementById('amountInput');
-    const amount = parseFloat(input.value);
+    const amountInput = document.getElementById('amountInput');
+    const dateInput = document.getElementById('incomeDate');
+    const amount = parseFloat(amountInput.value);
+    const incomeDate = dateInput.value;
     
     if (!amount || amount <= 0) {
         alert('Введите корректную сумму!');
         return;
     }
     
-    if (!appData.targetDate || !appData.dailyGoal) {
+    if (!incomeDate) {
+        alert('Выберите дату!');
+        return;
+    }
+    
+    if (!appData.startDate || !appData.targetDate || !appData.dailyGoal) {
         alert('Сначала настройте цель в настройках!');
         openSettings();
         return;
     }
     
+    // Проверка, что дата дохода не раньше начала и не позже конца цели
+    const income = new Date(incomeDate);
+    const start = new Date(appData.startDate);
+    const end = new Date(appData.targetDate);
+    
+    if (income < start) {
+        alert('Дата дохода не может быть раньше начала цели!');
+        return;
+    }
+    
+    if (income > end) {
+        alert('Дата дохода не может быть позже окончания цели!');
+        return;
+    }
+    
     // Добавление в историю
     const transaction = {
-        date: new Date().toISOString(),
-        amount: amount
+        date: incomeDate,
+        amount: amount,
+        addedAt: new Date().toISOString()
     };
     
     appData.history.unshift(transaction);
@@ -106,13 +149,13 @@ function addIncome() {
     saveData();
     updateUI();
     
-    // Очистка поля
-    input.value = '';
+    // Очистка поля суммы, но оставляем дату
+    amountInput.value = '';
     
     // Анимация добавления
-    input.style.transform = 'scale(0.98)';
+    amountInput.style.transform = 'scale(0.98)';
     setTimeout(() => {
-        input.style.transform = 'scale(1)';
+        amountInput.style.transform = 'scale(1)';
     }, 100);
 }
 
@@ -129,7 +172,8 @@ function clearHistory() {
 // Обновление интерфейса
 function updateUI() {
     // Если нет цели, показываем прочерки
-    if (!appData.targetDate || !appData.dailyGoal) {
+    if (!appData.startDate || !appData.targetDate || !appData.dailyGoal) {
+        document.getElementById('startDate').textContent = '—';
         document.getElementById('targetDate').textContent = 'не установлена';
         document.getElementById('targetAmount').textContent = '0';
         document.getElementById('totalCollected').textContent = '0 ₽';
@@ -146,21 +190,36 @@ function updateUI() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    const start = new Date(appData.startDate);
+    start.setHours(0, 0, 0, 0);
+    
     const target = new Date(appData.targetDate);
     target.setHours(0, 0, 0, 0);
     
-    const totalDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-    const daysLeft = totalDays > 0 ? totalDays : 0;
+    // Общее количество дней
+    const totalDays = Math.ceil((target - start) / (1000 * 60 * 60 * 24)) + 1;
     
+    // Прошло дней с начала
+    const daysPassed = Math.max(0, Math.ceil((today - start) / (1000 * 60 * 60 * 24)));
+    
+    // Осталось дней
+    const daysLeft = Math.max(0, Math.ceil((target - today) / (1000 * 60 * 60 * 24)) + 1);
+    
+    // Общая цель
     const totalTarget = appData.dailyGoal * totalDays;
-    const shouldHaveToday = appData.dailyGoal * (totalDays - daysLeft);
+    
+    // Должно быть собрано на сегодня
+    const shouldHaveToday = appData.dailyGoal * Math.min(daysPassed, totalDays);
+    
+    // Разница (опережение/отставание)
     const difference = appData.totalCollected - shouldHaveToday;
     
     // Сколько нужно в день с учетом текущего прогресса
-    const remainingAmount = totalTarget - appData.totalCollected;
-    const dailyRequired = daysLeft > 0 ? Math.max(0, remainingAmount / daysLeft) : 0;
+    const remainingAmount = Math.max(0, totalTarget - appData.totalCollected);
+    const dailyRequired = daysLeft > 0 ? remainingAmount / daysLeft : 0;
     
     // Обновление элементов
+    document.getElementById('startDate').textContent = formatDate(appData.startDate);
     document.getElementById('targetDate').textContent = formatDate(appData.targetDate);
     document.getElementById('targetAmount').textContent = formatNumber(totalTarget);
     document.getElementById('totalCollected').textContent = formatNumber(appData.totalCollected) + ' ₽';
@@ -195,10 +254,15 @@ function updateHistory() {
         return;
     }
     
-    historyList.innerHTML = appData.history.map(item => `
+    // Сортировка по дате операции (не по времени добавления)
+    const sortedHistory = [...appData.history].sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+    );
+    
+    historyList.innerHTML = sortedHistory.map(item => `
         <div class="history-item">
-            <div>
-                <div class="history-date">${formatDateTime(item.date)}</div>
+            <div class="history-info">
+                <div class="history-date">${formatDateForHistory(item.date)}</div>
             </div>
             <div class="history-amount">+${formatNumber(item.amount)} ₽</div>
         </div>
@@ -214,27 +278,29 @@ function formatNumber(num) {
 function formatDate(dateString) {
     const date = new Date(dateString);
     const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
-    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    return `${date.getDate()} ${months[date.getMonth()]}`;
 }
 
-// Форматирование даты и времени
-function formatDateTime(dateString) {
+// Форматирование даты для истории
+function formatDateForHistory(dateString) {
     const date = new Date(dateString);
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     
-    const isToday = date.toDateString() === today.toDateString();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    const isYesterday = date.toDateString() === yesterday.toDateString();
     
-    const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    const operationDate = new Date(date);
+    operationDate.setHours(0, 0, 0, 0);
     
-    if (isToday) {
-        return `Сегодня, ${time}`;
-    } else if (isYesterday) {
-        return `Вчера, ${time}`;
+    if (operationDate.getTime() === today.getTime()) {
+        return 'Сегодня';
+    } else if (operationDate.getTime() === yesterday.getTime()) {
+        return 'Вчера';
     } else {
-        return `${formatDate(dateString)}, ${time}`;
+        const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
+                       'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+        return `${date.getDate()} ${months[date.getMonth()]}`;
     }
 }
 
@@ -242,5 +308,13 @@ function formatDateTime(dateString) {
 document.addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && document.activeElement.id === 'amountInput') {
         addIncome();
+    }
+});
+
+// Закрытие модального окна при клике вне его
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('settingsModal');
+    if (e.target === modal) {
+        closeSettings();
     }
 });
