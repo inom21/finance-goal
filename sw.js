@@ -1,10 +1,12 @@
-const CACHE_NAME = 'finance-goal-v1';
+const CACHE_NAME = 'finance-goal-v2';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/app.js',
-    '/manifest.json'
+    './',
+    './index.html',
+    './styles.css',
+    './app.js',
+    './manifest.json',
+    './icon-192.png',
+    './icon-512.png'
 ];
 
 // Установка Service Worker
@@ -62,8 +64,8 @@ self.addEventListener('fetch', event => {
                 });
             })
             .catch(() => {
-                // Офлайн fallback
-                return new Response('Приложение работает в офлайн режиме');
+                // Офлайн fallback - возвращаем главную страницу
+                return caches.match('./index.html');
             })
     );
 });
