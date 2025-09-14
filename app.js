@@ -25,13 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
     tomorrow.setDate(tomorrow.getDate() + 1);
     document.getElementById('endDateInput').min = tomorrow.toISOString().split('T')[0];
     
-    // Регистрация Service Worker
+    // Регистрация Service Worker с правильным путем
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
+        navigator.serviceWorker.register('./sw.js')
             .then(reg => console.log('Service Worker зарегистрирован'))
             .catch(err => console.log('Ошибка регистрации Service Worker:', err));
     }
 });
+
+// ... остальной код остается без изменений ...
+
 
 // Загрузка данных из localStorage
 function loadData() {
@@ -318,3 +321,4 @@ document.addEventListener('click', (e) => {
         closeSettings();
     }
 });
+
